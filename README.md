@@ -19,6 +19,9 @@ The codebase also contains scan request/result models plus console, CSV, and
 Markdown report renderers. Those renderers are ready for the upcoming scan loop
 but are not yet wired to live Modbus traffic.
 
+The Modbus TCP client adapter is implemented and simulator-tested, but the CLI
+still stops at the dry scan plan until scan orchestration is wired.
+
 ## Intended v0.1 Scope
 
 - Modbus TCP.
