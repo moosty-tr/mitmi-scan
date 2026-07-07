@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mitmi.Scan.Cli/Mitmi.Scan.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mitmi.Scan.Tests/Mitmi.Scan.Tests.csproj" />
+  </Folder>
+</Solution>
