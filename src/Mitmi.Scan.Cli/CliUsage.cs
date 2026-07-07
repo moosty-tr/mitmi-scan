@@ -21,6 +21,6 @@ Optional options:
   --format <format>     console, csv, or markdown. Default: console.
   --output <path>       Required for csv and markdown reports.
 
-This implementation slice prints a dry scan plan only. It does not open network connections.
+The scanner sends one read-only Modbus TCP request per table/address pair.
 """;
 }

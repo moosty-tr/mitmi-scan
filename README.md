@@ -9,18 +9,14 @@ operator-friendly formats.
 
 ## Status
 
-Initial CLI validation and report-model slices implemented.
+Single-table/all-table scan orchestration implemented.
 
 The current executable parses `mitmi-scan scan ...`, validates the v0.1 command
-contract, and prints a dry scan plan. It does not open network connections or
-send Modbus requests yet.
+contract, opens a Modbus TCP connection, sends one read-only request per
+selected table/address pair, and renders console, CSV, or Markdown reports.
 
-The codebase also contains scan request/result models plus console, CSV, and
-Markdown report renderers. Those renderers are ready for the upcoming scan loop
-but are not yet wired to live Modbus traffic.
-
-The Modbus TCP client adapter is implemented and simulator-tested, but the CLI
-still stops at the dry scan plan until scan orchestration is wired.
+The scanner is simulator-tested. Field-readiness still requires validation
+against an approved Modbus TCP device or bench rig.
 
 ## Intended v0.1 Scope
 
@@ -72,7 +68,7 @@ dotnet build Mitmi.Scan.slnx
 dotnet test Mitmi.Scan.slnx
 ```
 
-Example dry scan plan:
+Example scan:
 
 ```powershell
 dotnet run --project src\Mitmi.Scan.Cli -- scan --host 192.168.1.50 --unit-id 1 --table holding-registers --start 0 --end 9

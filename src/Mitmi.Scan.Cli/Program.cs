@@ -1,3 +1,3 @@
 using Mitmi.Scan.Cli;
 
-return CliApplication.Run(args, Console.Out, Console.Error);
+return await CliApplication.RunAsync(args, Console.Out, Console.Error);
