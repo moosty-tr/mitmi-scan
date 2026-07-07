@@ -92,8 +92,12 @@ Recommended fields:
 - Timestamp in UTC.
 - Optional diagnostic message.
 
-This model should drive console, CSV, and Markdown output. Avoid making each
-output format invent its own interpretation of scan outcomes.
+This model should drive report output. Avoid making each output format invent
+its own interpretation of scan outcomes.
+
+Not every report format needs to expose every result field. The durable result
+model should preserve failures and timing details, while operator-oriented
+reports can choose a smaller projection when that better serves the workflow.
 
 ## Progress And ETA
 
@@ -116,11 +120,28 @@ takes the configured timeout.
 
 Console output should optimize for quick field inspection.
 
-CSV output should optimize for spreadsheet import and later tooling.
+CSV output should optimize for spreadsheet import and later tooling. It should
+remain the exhaustive report format: one row per planned probe, including
+readable values, Modbus exception responses, timeouts, transport errors, and
+invalid responses.
 
-Markdown output should optimize for support handoff and documentation.
+Markdown output should optimize for support handoff and documentation. Physical
+device feedback showed that failed-read rows with long exception text obscure
+the main discovery question. Markdown should therefore list successful reads
+only, with value columns useful for quick reverse engineering:
 
-Recommended common columns:
+- Hex.
+- Decimal.
+- ASCII.
+- Binary.
+
+The Markdown report should end with a short scan summary, such as:
+
+```text
+Scanned 100 holding registers in 12.345 seconds; found total of 42 active registers.
+```
+
+Recommended exhaustive CSV columns:
 
 - Table.
 - Unit ID.
@@ -132,8 +153,9 @@ Recommended common columns:
 - Duration ms.
 - Message.
 
-Readable values and Modbus exceptions should both appear in reports. Hiding
-exceptions would remove useful map information.
+Readable values and Modbus exceptions should both appear in exhaustive reports.
+Compact Markdown intentionally omits failed reads to keep the field-facing
+address map readable.
 
 ## Exit Codes
 

@@ -23,10 +23,10 @@ powershell -ExecutionPolicy Bypass -File scripts\Invoke-ReleaseSmokeTest.ps1
 ## Result
 
 - Debug build succeeded with 0 warnings and 0 errors.
-- Debug test suite passed: 46 tests.
+- Debug test suite passed: 48 tests.
 - Release smoke succeeded.
 - Release build succeeded with 0 warnings and 0 errors.
-- Release test suite passed: 46 tests.
+- Release test suite passed: 48 tests.
 - Release CLI help command completed successfully.
 
 Simulator tests cover:
@@ -42,7 +42,8 @@ Software tests also cover:
 
 - CLI validation
 - report rendering
-- CSV and Markdown escaping
+- CSV escaping
+- compact Markdown active-value reporting
 - deterministic scan order
 - retry behavior
 - progress calculation and rendering

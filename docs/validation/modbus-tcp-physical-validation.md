@@ -54,9 +54,12 @@ Record:
 ## Pass Criteria
 
 - Scanner completes the requested range.
-- Report contains one row per planned probe.
-- Readable values and Modbus exceptions are recorded distinctly.
-- Timeouts, transport errors, and malformed responses are recorded distinctly.
+- Markdown report contains only successful reads and a scan summary.
+- Markdown values include hex, decimal, ASCII, and binary representations.
+- CSV report contains one row per planned probe when exhaustive evidence is
+  needed.
+- CSV records readable values, Modbus exceptions, timeouts, transport errors,
+  and malformed responses distinctly.
 - Device remains stable during and after the scan.
 - Operator confirms no unexpected side effects.
 
@@ -78,3 +81,4 @@ After first contact succeeds:
 2. Repeat for another single table.
 3. Only then consider `--table all` for a modest range.
 4. Preserve every command and report as validation evidence.
+5. Use CSV output when failure details are needed for debugging.

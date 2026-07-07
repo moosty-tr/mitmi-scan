@@ -20,9 +20,11 @@ public sealed class ScanRunnerTests
         ScriptedAddressProbeClient client = new(ModbusProbeOutcome.Readable(ScanValue.Bit(true)));
         ScanRunner runner = new(new SingleClientFactory(client));
 
-        IReadOnlyList<ScanResult> results = await runner.RunAsync(request, CancellationToken.None);
+        ScanRunResult scanRun = await runner.RunAsync(request, CancellationToken.None);
+        IReadOnlyList<ScanResult> results = scanRun.Results;
 
         Assert.Equal(4, results.Count);
+        Assert.True(scanRun.Elapsed >= TimeSpan.Zero);
         Assert.Equal(
             [
                 (ModbusTable.Coils, 0),
@@ -42,7 +44,8 @@ public sealed class ScanRunnerTests
             ModbusProbeOutcome.Readable(ScanValue.Register(12)));
         ScanRunner runner = new(new SingleClientFactory(client));
 
-        IReadOnlyList<ScanResult> results = await runner.RunAsync(request, CancellationToken.None);
+        ScanRunResult scanRun = await runner.RunAsync(request, CancellationToken.None);
+        IReadOnlyList<ScanResult> results = scanRun.Results;
 
         ScanResult result = Assert.Single(results);
         Assert.Equal(ScanResultStatus.Readable, result.Status);
@@ -59,7 +62,8 @@ public sealed class ScanRunnerTests
             ModbusProbeOutcome.Readable(ScanValue.Register(12)));
         ScanRunner runner = new(new SingleClientFactory(client));
 
-        IReadOnlyList<ScanResult> results = await runner.RunAsync(request, CancellationToken.None);
+        ScanRunResult scanRun = await runner.RunAsync(request, CancellationToken.None);
+        IReadOnlyList<ScanResult> results = scanRun.Results;
 
         ScanResult result = Assert.Single(results);
         Assert.Equal(ScanResultStatus.ModbusException, result.Status);
@@ -76,7 +80,8 @@ public sealed class ScanRunnerTests
             ModbusProbeOutcome.TransportError("socket still closed"));
         ScanRunner runner = new(new SingleClientFactory(client));
 
-        IReadOnlyList<ScanResult> results = await runner.RunAsync(request, CancellationToken.None);
+        ScanRunResult scanRun = await runner.RunAsync(request, CancellationToken.None);
+        IReadOnlyList<ScanResult> results = scanRun.Results;
 
         ScanResult result = Assert.Single(results);
         Assert.Equal(ScanResultStatus.TransportError, result.Status);

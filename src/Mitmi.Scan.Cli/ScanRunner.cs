@@ -11,12 +11,12 @@ public sealed class ScanRunner
         _clientFactory = clientFactory;
     }
 
-    public async Task<IReadOnlyList<ScanResult>> RunAsync(ScanRequest request, CancellationToken cancellationToken)
+    public async Task<ScanRunResult> RunAsync(ScanRequest request, CancellationToken cancellationToken)
     {
         return await RunAsync(request, NoOpScanProgressSink.Instance, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<IReadOnlyList<ScanResult>> RunAsync(
+    public async Task<ScanRunResult> RunAsync(
         ScanRequest request,
         IScanProgressSink progressSink,
         CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ public sealed class ScanRunner
 
         scanStopwatch.Stop();
         progressSink.ScanCompleted(new ScanProgressSnapshot(completedProbes, request.PlannedProbeCount, scanStopwatch.Elapsed));
-        return results;
+        return new ScanRunResult(results, scanStopwatch.Elapsed);
     }
 
     private static IEnumerable<ScanProbe> BuildProbes(ScanRequest request)

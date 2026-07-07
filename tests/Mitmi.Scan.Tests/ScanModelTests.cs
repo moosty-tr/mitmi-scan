@@ -74,6 +74,28 @@ public sealed class ScanModelTests
     }
 
     [Fact]
+    public void RegisterValue_ReportFormatsExposeCommonRepresentations()
+    {
+        ScanValue value = ScanValue.Register(0x4142);
+
+        Assert.Equal("0x4142", value.ToHexReportValue());
+        Assert.Equal("16706", value.ToDecimalReportValue());
+        Assert.Equal("AB", value.ToAsciiReportValue());
+        Assert.Equal("0b0100000101000010", value.ToBinaryReportValue());
+    }
+
+    [Fact]
+    public void BitValue_ReportFormatsExposeCommonRepresentations()
+    {
+        ScanValue value = ScanValue.Bit(true);
+
+        Assert.Equal("0x01", value.ToHexReportValue());
+        Assert.Equal("1", value.ToDecimalReportValue());
+        Assert.Equal(string.Empty, value.ToAsciiReportValue());
+        Assert.Equal("1", value.ToBinaryReportValue());
+    }
+
+    [Fact]
     public void ResultFactory_WithZeroAttempts_Throws()
     {
         ScanProbe probe = new("plc.local", 502, 1, ModbusTable.Coils, 0);

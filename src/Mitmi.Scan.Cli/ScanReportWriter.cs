@@ -9,16 +9,16 @@ public static class ScanReportWriter
     public static async Task WriteAsync(
         ReportFormat format,
         string? outputPath,
-        IReadOnlyList<ScanResult> results,
+        ScanRunResult scanRun,
         TextWriter consoleOutput,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(results);
+        ArgumentNullException.ThrowIfNull(scanRun);
         ArgumentNullException.ThrowIfNull(consoleOutput);
 
         if (format == ReportFormat.Console)
         {
-            ConsoleScanReportRenderer.Write(results, consoleOutput);
+            ConsoleScanReportRenderer.Write(scanRun.Results, consoleOutput);
             return;
         }
 
@@ -30,24 +30,24 @@ public static class ScanReportWriter
         await using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read);
         await using StreamWriter writer = new(stream, Utf8NoBom);
 
-        WriteReport(format, results, writer);
+        WriteReport(format, scanRun, writer);
         await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
 
-        consoleOutput.WriteLine($"Scan completed. Results: {results.Count}. Report: {outputPath}");
+        consoleOutput.WriteLine($"Scan completed. Results: {scanRun.Results.Count}. Report: {outputPath}");
     }
 
-    private static void WriteReport(ReportFormat format, IReadOnlyList<ScanResult> results, TextWriter writer)
+    private static void WriteReport(ReportFormat format, ScanRunResult scanRun, TextWriter writer)
     {
         switch (format)
         {
             case ReportFormat.Csv:
-                CsvScanReportRenderer.Write(results, writer);
+                CsvScanReportRenderer.Write(scanRun.Results, writer);
                 break;
             case ReportFormat.Markdown:
-                MarkdownScanReportRenderer.Write(results, writer);
+                MarkdownScanReportRenderer.Write(scanRun, writer);
                 break;
             case ReportFormat.Console:
-                ConsoleScanReportRenderer.Write(results, writer);
+                ConsoleScanReportRenderer.Write(scanRun.Results, writer);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(format), format, "Unknown report format.");

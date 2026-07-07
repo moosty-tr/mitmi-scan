@@ -101,29 +101,40 @@ public sealed class ScanReportRendererTests
     }
 
     [Fact]
-    public void MarkdownRenderer_WritesStableColumnsAndEscapesPipeAndNewline()
+    public void MarkdownRenderer_WritesOnlyReadableValuesAndSummary()
     {
-        ScanResult result = ScanResult.InvalidResponse(
-            Probe(ModbusTable.DiscreteInputs, address: 7),
+        ScanResult readable = ScanResult.Readable(
+            Probe(ModbusTable.HoldingRegisters, address: 10),
+            ScanValue.Register(0x4142),
             attempts: 1,
             duration: TimeSpan.FromMilliseconds(3),
+            timestampUtc: DateTimeOffset.UnixEpoch);
+        ScanResult failed = ScanResult.ModbusException(
+            Probe(ModbusTable.HoldingRegisters, address: 11),
+            exceptionCode: 0x02,
+            attempts: 1,
+            duration: TimeSpan.FromMilliseconds(2),
             timestampUtc: DateTimeOffset.UnixEpoch,
-            message: "bad | frame\r\nretry");
+            message: "long noisy exception message that should not be in Markdown");
+        ScanRunResult scanRun = new([readable, failed], TimeSpan.FromSeconds(2.5));
 
         using StringWriter writer = new(CultureInfo.InvariantCulture);
 
-        MarkdownScanReportRenderer.Write([result], writer);
+        MarkdownScanReportRenderer.Write(scanRun, writer);
 
         string expected = string.Join(
             Environment.NewLine,
             [
-                "| Table | Unit ID | Zero-based Address | Status | Value | Exception Code | Attempts | Duration ms | Message |",
-                "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
-                "| discrete-inputs | 1 | 7 | invalid-response |  |  | 1 | 3 | bad \\| frame<br>retry |"
+                "| Table | Address | Hex | Decimal | ASCII | Binary |",
+                "| --- | --- | --- | --- | --- | --- |",
+                "| holding-registers | 10 | 0x4142 | 16706 | AB | 0b0100000101000010 |",
+                "",
+                "Scanned 2 holding registers in 2.5 seconds; found total of 1 active register."
             ])
             + Environment.NewLine;
 
         Assert.Equal(expected, writer.ToString());
+        Assert.DoesNotContain("long noisy exception", writer.ToString(), StringComparison.Ordinal);
     }
 
     [Fact]

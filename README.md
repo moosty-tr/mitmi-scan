@@ -15,6 +15,10 @@ The current executable parses `mitmi-scan scan ...`, validates the v0.1 command
 contract, opens a Modbus TCP connection, sends one read-only request per
 selected table/address pair, and renders console, CSV, or Markdown reports.
 
+Markdown reports list successful reads only and show values as hex, decimal,
+ASCII, and binary with a short scan summary. CSV remains the exhaustive
+machine-readable output when failure details are needed.
+
 The scanner is simulator-tested. Field-readiness still requires validation
 against an approved Modbus TCP device or bench rig.
 
@@ -30,7 +34,7 @@ against an approved Modbus TCP device or bench rig.
 - Configurable target host, port, unit ID, address range, timeout, delay, and
   retry count.
 - Console progress with estimated time remaining and an ASCII progress bar.
-- Report output as console summary, CSV, or Markdown table.
+- Report output as console summary, exhaustive CSV, or compact Markdown table.
 - Zero-based PDU addresses as the canonical address representation.
 
 ## Out Of Scope For v0.1

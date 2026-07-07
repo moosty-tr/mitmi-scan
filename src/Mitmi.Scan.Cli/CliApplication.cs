@@ -53,8 +53,8 @@ public static class CliApplication
 
         try
         {
-            IReadOnlyList<ScanResult> scanResults = await runner.RunAsync(request, progressSink ?? NoOpScanProgressSink.Instance, cancellationToken).ConfigureAwait(false);
-            await ScanReportWriter.WriteAsync(options.Format, options.OutputPath, scanResults, output, cancellationToken).ConfigureAwait(false);
+            ScanRunResult scanRun = await runner.RunAsync(request, progressSink ?? NoOpScanProgressSink.Instance, cancellationToken).ConfigureAwait(false);
+            await ScanReportWriter.WriteAsync(options.Format, options.OutputPath, scanRun, output, cancellationToken).ConfigureAwait(false);
             return CliExitCodes.Success;
         }
         catch (ModbusConnectionException exception)
