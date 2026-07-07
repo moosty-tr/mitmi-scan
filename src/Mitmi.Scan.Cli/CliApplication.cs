@@ -6,7 +6,12 @@ public static class CliApplication
 {
     public static Task<int> RunAsync(string[] args, TextWriter output, TextWriter error)
     {
-        return RunAsync(args, output, error, new NModbusTcpProbeClientFactory());
+        return RunAsync(
+            args,
+            output,
+            error,
+            new NModbusTcpProbeClientFactory(),
+            new TextScanProgressSink(output, Console.IsOutputRedirected));
     }
 
     public static async Task<int> RunAsync(
@@ -14,6 +19,7 @@ public static class CliApplication
         TextWriter output,
         TextWriter error,
         IAddressProbeClientFactory clientFactory,
+        IScanProgressSink? progressSink = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(args);
@@ -47,7 +53,7 @@ public static class CliApplication
 
         try
         {
-            IReadOnlyList<ScanResult> scanResults = await runner.RunAsync(request, cancellationToken).ConfigureAwait(false);
+            IReadOnlyList<ScanResult> scanResults = await runner.RunAsync(request, progressSink ?? NoOpScanProgressSink.Instance, cancellationToken).ConfigureAwait(false);
             await ScanReportWriter.WriteAsync(options.Format, options.OutputPath, scanResults, output, cancellationToken).ConfigureAwait(false);
             return CliExitCodes.Success;
         }

@@ -84,6 +84,32 @@ public sealed class ScanRunnerTests
         Assert.Equal(2, client.ReconnectCount);
     }
 
+    [Fact]
+    public async Task RunAsync_EmitsProgressSnapshots()
+    {
+        ScanRequest request = new(
+            host: "plc.local",
+            port: 502,
+            unitId: 1,
+            tables: [ModbusTable.HoldingRegisters],
+            startAddress: 0,
+            endAddress: 2,
+            timeoutMilliseconds: 1_000,
+            delayMilliseconds: 0,
+            retries: 0);
+        ScriptedAddressProbeClient client = new(ModbusProbeOutcome.Readable(ScanValue.Register(1)));
+        RecordingProgressSink progress = new();
+        ScanRunner runner = new(new SingleClientFactory(client));
+
+        _ = await runner.RunAsync(request, progress, CancellationToken.None);
+
+        Assert.Equal(1, progress.StartedCount);
+        Assert.Equal(1, progress.CompletedCount);
+        Assert.Equal([1, 2, 3], progress.ProbeSnapshots.Select(snapshot => snapshot.CompletedProbes).ToArray());
+        Assert.Equal(3, progress.FinalSnapshot?.CompletedProbes);
+        Assert.Equal(3, progress.FinalSnapshot?.TotalProbes);
+    }
+
     private static ScanRequest Request(int retries)
     {
         return new ScanRequest(

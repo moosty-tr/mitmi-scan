@@ -9,7 +9,7 @@ operator-friendly formats.
 
 ## Status
 
-Single-table/all-table scan orchestration implemented.
+Single-table/all-table scan orchestration with progress reporting implemented.
 
 The current executable parses `mitmi-scan scan ...`, validates the v0.1 command
 contract, opens a Modbus TCP connection, sends one read-only request per
@@ -66,6 +66,7 @@ Build and test:
 ```powershell
 dotnet build Mitmi.Scan.slnx
 dotnet test Mitmi.Scan.slnx
+.\scripts\Invoke-ReleaseSmokeTest.ps1
 ```
 
 Example scan:

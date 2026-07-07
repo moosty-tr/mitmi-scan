@@ -13,18 +13,32 @@ public sealed class ScanRunner
 
     public async Task<IReadOnlyList<ScanResult>> RunAsync(ScanRequest request, CancellationToken cancellationToken)
     {
+        return await RunAsync(request, NoOpScanProgressSink.Instance, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<IReadOnlyList<ScanResult>> RunAsync(
+        ScanRequest request,
+        IScanProgressSink progressSink,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(progressSink);
 
         List<ScanResult> results = new(capacity: checked((int)Math.Min(request.PlannedProbeCount, int.MaxValue)));
+        Stopwatch scanStopwatch = Stopwatch.StartNew();
+        long completedProbes = 0;
 
         await using IAddressProbeClient client = _clientFactory.Create(request);
         await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
+        progressSink.ScanStarted(request);
 
         foreach (ScanProbe probe in BuildProbes(request))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ScanResult result = await ProbeWithRetryAsync(client, request, probe, cancellationToken).ConfigureAwait(false);
             results.Add(result);
+            completedProbes++;
+            progressSink.ProbeCompleted(new ScanProgressSnapshot(completedProbes, request.PlannedProbeCount, scanStopwatch.Elapsed));
 
             if (request.DelayMilliseconds > 0)
             {
@@ -32,6 +46,8 @@ public sealed class ScanRunner
             }
         }
 
+        scanStopwatch.Stop();
+        progressSink.ScanCompleted(new ScanProgressSnapshot(completedProbes, request.PlannedProbeCount, scanStopwatch.Elapsed));
         return results;
     }
 
