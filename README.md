@@ -73,8 +73,25 @@ dotnet test Mitmi.Scan.slnx
 .\scripts\Invoke-ReleaseSmokeTest.ps1
 ```
 
+Publish a Windows executable:
+
+```powershell
+.\scripts\Publish-Release.ps1
+.\artifacts\publish\mitmi-scan-win-x64\mitmi-scan.exe --help
+```
+
 Example scan:
 
 ```powershell
 dotnet run --project src\Mitmi.Scan.Cli -- scan --host 192.168.1.50 --unit-id 1 --table holding-registers --start 0 --end 9
+```
+
+Compact Markdown output:
+
+```markdown
+| Table | Address | Hex | Decimal | ASCII | Binary |
+| --- | --- | --- | --- | --- | --- |
+| holding-registers | 0 | 0x4142 | 16706 | AB | 0b0100000101000010 |
+
+Scanned 10 holding registers in 1.234 seconds; found total of 1 active register.
 ```
