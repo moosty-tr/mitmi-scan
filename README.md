@@ -9,11 +9,15 @@ operator-friendly formats.
 
 ## Status
 
-Initial CLI validation slice implemented.
+Initial CLI validation and report-model slices implemented.
 
 The current executable parses `mitmi-scan scan ...`, validates the v0.1 command
 contract, and prints a dry scan plan. It does not open network connections or
 send Modbus requests yet.
+
+The codebase also contains scan request/result models plus console, CSV, and
+Markdown report renderers. Those renderers are ready for the upcoming scan loop
+but are not yet wired to live Modbus traffic.
 
 ## Intended v0.1 Scope
 

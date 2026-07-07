@@ -54,6 +54,25 @@ public static class ScanTableSelectionExtensions
         return table == ScanTableSelection.All ? 4 : 1;
     }
 
+    public static IReadOnlyList<ModbusTable> ExpandTables(this ScanTableSelection table)
+    {
+        return table switch
+        {
+            ScanTableSelection.Coils => [ModbusTable.Coils],
+            ScanTableSelection.DiscreteInputs => [ModbusTable.DiscreteInputs],
+            ScanTableSelection.HoldingRegisters => [ModbusTable.HoldingRegisters],
+            ScanTableSelection.InputRegisters => [ModbusTable.InputRegisters],
+            ScanTableSelection.All =>
+            [
+                ModbusTable.Coils,
+                ModbusTable.DiscreteInputs,
+                ModbusTable.HoldingRegisters,
+                ModbusTable.InputRegisters
+            ],
+            _ => throw new ArgumentOutOfRangeException(nameof(table), table, "Unknown scan table.")
+        };
+    }
+
     public static string ToPlanDisplayName(this ScanTableSelection table)
     {
         if (table != ScanTableSelection.All)
