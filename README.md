@@ -19,8 +19,9 @@ Markdown reports list successful reads only and show values as hex, decimal,
 ASCII, and binary with a short scan summary. CSV remains the exhaustive
 machine-readable output when failure details are needed.
 
-The scanner is simulator-tested. Field-readiness still requires validation
-against an approved Modbus TCP device or bench rig.
+The scanner is simulator-tested and has been field-validated against an
+approved Teletek fire alarm panel. The current v0.1 validation evidence is in
+`docs/validation/results`.
 
 ## Intended v0.1 Scope
 
@@ -77,8 +78,12 @@ Publish a Windows executable:
 
 ```powershell
 .\scripts\Publish-Release.ps1
-.\artifacts\publish\mitmi-scan-win-x64\mitmi-scan.exe --help
+.\artifacts\publish\mitmi-scan-v0.1.0-win-x64\mitmi-scan.exe --help
 ```
+
+The release script creates `artifacts/release/mitmi-scan-v0.1.0-win-x64.zip`.
+By default the archive is self-contained and includes `mitmi-scan.exe`, the
+README, Apache-2.0 license, and third-party notices.
 
 Example scan:
 
@@ -95,3 +100,7 @@ Compact Markdown output:
 
 Scanned 10 holding registers in 1.234 seconds; found total of 1 active register.
 ```
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).

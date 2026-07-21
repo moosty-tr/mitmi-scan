@@ -45,8 +45,9 @@ leave the CLI usable or at least buildable, with tests appropriate to the risk.
 
 Software-only tests can prove argument validation, report formatting, progress
 calculation, scan orchestration, and protocol behavior against a simulator.
-Field-readiness still requires validation against an approved Modbus device or
-bench rig because scanning actively probes device addresses.
+Field-readiness claims require validation against an approved Modbus device or
+bench rig because scanning actively probes device addresses; preserve concise
+curated validation notes rather than raw field dumps.
 
 ## Safety Boundary
 
